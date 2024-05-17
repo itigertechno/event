@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CityService } from './city.service';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
@@ -10,6 +10,11 @@ export class CityController {
   @Post()
   create(@Body() createCityDto: CreateCityDto) {
     return this.cityService.create(createCityDto);
+  }
+
+  @Get('suggestions')
+  async getSuggestions(@Query('query') query: string) {
+    return this.cityService.getAddressSuggestions(query);
   }
 
   @Get()
