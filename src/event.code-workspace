@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../event-service"
+		},
+		{
+			"path": "../../user-service"
+		},
+		{
+			"path": "../../chat-service"
+		},
+		{
+			"path": "../../notification-service"
+		}
+	],
+	"settings": {}
+}
