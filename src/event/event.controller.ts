@@ -1,4 +1,4 @@
-import { Controller, Inject, Get, Body, Patch, Param, Delete, Post, Req, Put } from '@nestjs/common';
+import { Controller, Inject, Get, Body, Patch, Param, Query, Post, Req, Put } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('event')
@@ -44,8 +44,8 @@ export class EventController {
   }
 
   @Get()
-  async getEvents() {
-    return this.eventClient.send<any>('findAllEvent', {});
+  async getEvents(@Query('from') from: number = 0, @Query('size') size: number = 10) {
+    return this.eventClient.send<any>('findAllEvent', { from, size });
   }
 
   @Get('/myEvents')
