@@ -62,5 +62,21 @@ export class AuthController {
     else throw new ForbiddenException('Invalid code')
   }
 
+  @Post('/restore')
+  async restore(@Body() data) {
+    let code;
+    if (data.email) {
+      code = await this.redisService.get(data.email)
+    }
+    if (data.phone) {
+      code = await this.redisService.get(data.phone)
+    }
+    if (data.code.toString() === code) {
+      return this.client.send<any>('restore', data);
+    }
+    else throw new ForbiddenException('Invalid code')
+  }
+
+
 
 }
