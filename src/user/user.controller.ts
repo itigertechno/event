@@ -1,13 +1,28 @@
-import { Controller, Inject, Get, Body, Put, Param, Delete, Post, Req } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Get,
+  Body,
+  Put,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('user')
 export class UserController {
-  constructor(@Inject('USER_SERVICE') private readonly client: ClientProxy) { }
+  constructor(@Inject('USER_SERVICE') private readonly client: ClientProxy) {}
 
-  @Get(':id')
+  @Get('/id/:id')
   async me(@Param('id') id: string) {
     return this.client.send<any>('findUser', id);
+  }
+
+  @Get('/all')
+  async getAll() {
+    console.log('getall');
+    return this.client.send<any>('getAll', {});
   }
 
   @Post('/contact')
@@ -19,8 +34,7 @@ export class UserController {
   @Put('/update')
   async updateUser(@Body() data: any, @Req() req) {
     data.id = req.userId;
-    console.log(data)
+    console.log(data);
     return this.client.send<any>('updateUser', data);
   }
-
 }

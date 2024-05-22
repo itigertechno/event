@@ -1,4 +1,9 @@
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
@@ -10,6 +15,9 @@ import { TagController } from './tag/tag.controller';
 import { EventController } from './event/event.controller';
 import { CategoryController } from './category/category.controller';
 import { RedisService } from './redis/redis.service';
+import { UploadController } from './fileUpload/upload.controller';
+import { GatewayModule } from './gateway/gateway.module';
+import { AppGateway } from './app.gateway';
 
 @Module({
   imports: [
@@ -26,7 +34,7 @@ import { RedisService } from './redis/redis.service';
         transport: Transport.RMQ,
         options: {
           urls: ['amqp://newuser:newpassword@127.0.0.1:5672'],
-          queue: 'users_queue'
+          queue: 'users_queue',
         },
       },
       {
@@ -34,22 +42,23 @@ import { RedisService } from './redis/redis.service';
         transport: Transport.RMQ,
         options: {
           urls: ['amqp://newuser:newpassword@127.0.0.1:5672'],
-          queue: 'events_queue'
+          queue: 'events_queue',
         },
       },
     ]),
     CityModule,
+    GatewayModule,
   ],
   controllers: [
-    AuthController, 
-    UserController, 
+    AuthController,
+    UserController,
     TagController,
     EventController,
-    CategoryController
+    CategoryController,
+    UploadController,
   ],
-  providers: [RedisService],
+  providers: [RedisService, AppGateway],
 })
-
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
@@ -57,4 +66,3 @@ export class AppModule implements NestModule {
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
-
