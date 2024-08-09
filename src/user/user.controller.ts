@@ -21,7 +21,6 @@ export class UserController {
 
   @Get('/all')
   async getAll() {
-    console.log('getall');
     return this.client.send<any>('getAll', {});
   }
 
@@ -34,7 +33,6 @@ export class UserController {
   @Put('/update')
   async updateUser(@Body() data: any, @Req() req) {
     data.id = req.userId;
-    console.log(data);
     return this.client.send<any>('updateUser', data);
   }
 }

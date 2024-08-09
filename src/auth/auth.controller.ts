@@ -1,4 +1,12 @@
-import { Controller, Inject, Get, Body, Post, Req, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Get,
+  Body,
+  Post,
+  Req,
+  ForbiddenException,
+} from '@nestjs/common';
 import { RedisService } from 'src/redis/redis.service';
 import { ClientProxy } from '@nestjs/microservices';
 import { Context, Telegraf } from 'telegraf';
@@ -14,7 +22,7 @@ export class AuthController {
     @Inject('USER_SERVICE') private readonly client: ClientProxy,
     @InjectBot() private readonly bot: Telegraf<Context>,
     private readonly redisService: RedisService,
-  ) { }
+  ) {}
 
   @Post('/register')
   async register(@Body() data) {
@@ -32,51 +40,45 @@ export class AuthController {
     let type;
     let inputValue;
     if (data.email) {
-      type = "почту " + data.email
-      inputValue = data.email
+      type = 'почту ' + data.email;
+      inputValue = data.email;
     }
     if (data.phone) {
-      type = "номер " + data.phone
-      inputValue = data.phone
+      type = 'номер ' + data.phone;
+      inputValue = data.phone;
     }
-    const msg = "На " + type + " был отправлен код: " + code;
+    const msg = 'На ' + type + ' был отправлен код: ' + code;
     await this.bot.telegram.sendMessage('-4231319794', msg);
-    console.log(code, inputValue)
-    this.redisService.setCode(inputValue, code)
-    return 'Код отправлен'
+    console.log(code, inputValue);
+    this.redisService.setCode(inputValue, code);
+    return { message: 'Код отправлен' };
   }
-
 
   @Post('/login')
   async login(@Body() data) {
     let code;
     if (data.email) {
-      code = await this.redisService.get(data.email)
+      code = await this.redisService.get(data.email);
     }
     if (data.phone) {
-      code = await this.redisService.get(data.phone)
+      code = await this.redisService.get(data.phone);
     }
     if (data.code.toString() === code) {
       return this.client.send<any>('login', data);
-    }
-    else throw new ForbiddenException('Invalid code')
+    } else throw new ForbiddenException('Invalid code');
   }
 
   @Post('/restore')
   async restore(@Body() data) {
     let code;
     if (data.email) {
-      code = await this.redisService.get(data.email)
+      code = await this.redisService.get(data.email);
     }
     if (data.phone) {
-      code = await this.redisService.get(data.phone)
+      code = await this.redisService.get(data.phone);
     }
     if (data.code.toString() === code) {
       return this.client.send<any>('restore', data);
-    }
-    else throw new ForbiddenException('Invalid code')
+    } else throw new ForbiddenException('Invalid code');
   }
-
-
-
 }

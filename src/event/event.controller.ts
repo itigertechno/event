@@ -1,14 +1,26 @@
-import { Controller, Inject, Get, Body, Patch, Param, Query, Post, Req, Put } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Get,
+  Body,
+  Param,
+  Query,
+  Post,
+  Req,
+  Put,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('event')
 export class EventController {
-  constructor(@Inject('EVENT_SERVICE') private readonly eventClient: ClientProxy) { }
+  constructor(
+    @Inject('EVENT_SERVICE') private readonly eventClient: ClientProxy,
+  ) {}
 
   @Post()
   async createEvent(@Body() data, @Req() req) {
     data.owner = req.userId;
-    console.log(data)
+    console.log(data);
     return this.eventClient.send<any>('createEvent', data);
   }
 
@@ -34,7 +46,7 @@ export class EventController {
 
   @Put('publishStatus')
   async changePublishStatus(@Body() data) {
-    console.log(data)
+    console.log(data);
     return this.eventClient.send<any>('changePublishStatus', data);
   }
 
@@ -44,7 +56,10 @@ export class EventController {
   }
 
   @Get()
-  async getEvents(@Query('from') from: number = 0, @Query('size') size: number = 10) {
+  async getEvents(
+    @Query('from') from: number = 0,
+    @Query('size') size: number = 10,
+  ) {
     return this.eventClient.send<any>('findAllEvent', { from, size });
   }
 
@@ -53,10 +68,8 @@ export class EventController {
     return this.eventClient.send<any>('selectEventOfUser', req.userId);
   }
 
-
   @Get(':id')
   async createTag(@Param('id') id: string) {
     return this.eventClient.send<any>('findOneEvent', id);
   }
-
 }
